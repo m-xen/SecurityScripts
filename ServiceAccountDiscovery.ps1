@@ -166,7 +166,7 @@ Foreach($dc in $domainControllers){
     }
 }
 Foreach($event in $events){
-$filtered.add(($event -Replace '(?={)(.*)(?>})','' -Replace '(\s+)Client Port:(\s+\d+)','' -Replace 'A Kerberos service ticket was requested.',"`r`n" -replace $eventJunk,''))
+$filtered.add(($event -Replace '(?={)(.*)(?>})','' -Replace '(\s+)Client Port:(\s+\d+)','' -Replace 'A Kerberos service ticket was requested.',"`r`n" -replace $eventJunk,'')) | Out-null
 }
 $filtered = $filtered | Sort-Object -Unique
 
@@ -223,7 +223,7 @@ if ($RecordCount -gt 0){
         try{$UserProps.Add('LogonTo...', "$($Userw.get("userWorkstations"))") | Out-null
         }catch{
         Logging "$($Userw.Path)  has no user workstations property"
-        $UserProps.Add('LogonTo...', "")
+        $UserProps.Add('LogonTo...', "") | Out-null
         }
         try{$UserProps.Add('Created', [dateTime]"$($_.properties.whencreated)") | Out-null
         }catch [System.Management.Automation.PropertyNotFoundException]{
