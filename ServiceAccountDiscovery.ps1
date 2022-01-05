@@ -1,5 +1,5 @@
 # Author : Martin Hill
-# Version: 1.1
+# Version: 1.0
 
 
 <#
@@ -207,7 +207,7 @@ if ($RecordCount -gt 0){
     ConvertTo-Html -Title "Service Principal Names" -Head $style -Body "Script runtime = $execDateTimeCustom <br> <br> N.B. If the domain was upgraded from Windows Server 2003 functional level, any passwords older than $RODC should be changed twice." | Out-File -Append "$reportFilePath"
     # Display account records                
     $ObjSearcher.FindAll() | ForEach-Object {
-
+        $Userw = [adsi]$_.Properties.adspath[0]
         # Fill hash array with results                    
         $UserProps = [ordered]@{}               
         try{$UserProps.Add('Description', "$($_.properties.description)") | Out-null
@@ -220,7 +220,6 @@ if ($RecordCount -gt 0){
         }catch [System.Management.Automation.PropertyNotFoundException]{Logging "$($Userw.Path)  $_"}
         try{$UserProps.Add('GroupMembership', "$($_.properties.memberof)") | Out-null
         }catch [System.Management.Automation.PropertyNotFoundException]{Logging "$($Userw.Path)  $_"}
-        $Userw = [adsi]$_.Properties.adspath[0]
         try{$UserProps.Add('LogonTo...', "$($Userw.get("userWorkstations"))") | Out-null
         }catch{
         Logging "$($Userw.Path)  has no user workstations property"
