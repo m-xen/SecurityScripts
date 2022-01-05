@@ -1,5 +1,5 @@
 # Author : Martin Hill
-# Version: 1.0
+# Version: 1.1
 
 
 <#
@@ -90,24 +90,13 @@ $execDateTimeHOUR = $execDateTime.Hour
 $execDateTimeMINUTE = $execDateTime.Minute
 $execDateTimeSECOND = $execDateTime.Second
 $execDateTimeCustom = [STRING]$execDateTimeYEAR + "-" + $("{0:D2}" -f $execDateTimeMONTH) + "-" + $("{0:D2}" -f $execDateTimeDAY) + "_" + $("{0:D2}" -f $execDateTimeHOUR) + "." + $("{0:D2}" -f $execDateTimeMINUTE) + "." + $("{0:D2}" -f $execDateTimeSECOND)
+
 $currentScriptFolderPath = Get-Location
 $localComputerName = $(Get-WmiObject -Class Win32_ComputerSystem).Name
 [string]$logFilePath = Join-Path $currentScriptFolderPath $($execDateTimeCustom + "_" + $localComputerName + "_Get-SPN.log")
-
-$execDateTime = Get-Date
-$execDateTimeYEAR = $execDateTime.Year
-$execDateTimeMONTH = $execDateTime.Month
-$execDateTimeDAY = $execDateTime.Day
-$execDateTimeHOUR = $execDateTime.Hour
-$execDateTimeMINUTE = $execDateTime.Minute
-$execDateTimeSECOND = $execDateTime.Second
-$execDateTimeCustom = [STRING]$execDateTimeYEAR + "-" + $("{0:D2}" -f $execDateTimeMONTH) + "-" + $("{0:D2}" -f $execDateTimeDAY) + "_" + $("{0:D2}" -f $execDateTimeHOUR) + "." + $("{0:D2}" -f $execDateTimeMINUTE) + "." + $("{0:D2}" -f $execDateTimeSECOND)
-$currentScriptFolderPath = Get-Location
-$localComputerName = $(Get-WmiObject -Class Win32_ComputerSystem).Name
 [string]$reportFilePath = Join-Path $currentScriptFolderPath $($execDateTimeCustom + "_" + $localComputerName + "_SPN_Audit_Report.htm")
 $events = [System.Collections.ArrayList]::new()
 $filtered = [System.Collections.ArrayList]::new()
-
 $eventJunk = "This event is generated every time access is requested to a resource such as a computer or a Windows service.  The service name indicates the resource to which access was requested.
 
 This event can be correlated with Windows logon events by comparing the Logon GUID fields in each event.  The logon event occurs on the machine that was accessed, which is often a different machine than the domain controller which issued the service ticket.
@@ -191,7 +180,7 @@ $ObjSearcher.Filter = "(samAccountName=Read-only Domain Controllers)"
 $Groupc = $ObjSearcher.FindAll()
 $Groupc  | ForEach-Object { 
                         $GroupProps = [ordered]@{} 
-                        $GroupProps.Add('RODCs Created On',"$($_.properties.whencreated)")
+                        $GroupProps.Add('RODCs Created On',"$($_.properties.whencreated)") | Out-null
                         }
 [string]$RODC = $GroupProps.Values.GetEnumerator()
 
@@ -221,41 +210,41 @@ if ($RecordCount -gt 0){
 
         # Fill hash array with results                    
         $UserProps = [ordered]@{}               
-        try{$UserProps.Add('Description', "$($_.properties.description)")
+        try{$UserProps.Add('Description', "$($_.properties.description)") | Out-null
         }catch [System.Management.Automation.PropertyNotFoundException]{Logging "$($Userw.Path)  $_"}
-        try{$UserProps.Add('SAMAccountName', "$($_.properties.samaccountname)")
+        try{$UserProps.Add('SAMAccountName', "$($_.properties.samaccountname)") | Out-null
         }catch [System.Management.Automation.PropertyNotFoundException]{Logging "$($Userw.Path)  $_"}
-        try{$UserProps.Add('UserPrincipalName', "$($_.properties.userprincipalname)")
+        try{$UserProps.Add('UserPrincipalName', "$($_.properties.userprincipalname)") | Out-null
         }catch [System.Management.Automation.PropertyNotFoundException]{Logging "$($Userw.Path)  $_"}
-        try{$UserProps.Add('DistinguishedName', "$($_.properties.distinguishedname)")
+        try{$UserProps.Add('DistinguishedName', "$($_.properties.distinguishedname)") | Out-null
         }catch [System.Management.Automation.PropertyNotFoundException]{Logging "$($Userw.Path)  $_"}
-        try{$UserProps.Add('GroupMembership', "$($_.properties.memberof)")
+        try{$UserProps.Add('GroupMembership', "$($_.properties.memberof)") | Out-null
         }catch [System.Management.Automation.PropertyNotFoundException]{Logging "$($Userw.Path)  $_"}
         $Userw = [adsi]$_.Properties.adspath[0]
-        try{$UserProps.Add('LogonTo...', "$($Userw.get("userWorkstations"))")
+        try{$UserProps.Add('LogonTo...', "$($Userw.get("userWorkstations"))") | Out-null
         }catch{
         Logging "$($Userw.Path)  has no user workstations property"
         $UserProps.Add('LogonTo...', "")
         }
-        try{$UserProps.Add('Created', [dateTime]"$($_.properties.whencreated)")
+        try{$UserProps.Add('Created', [dateTime]"$($_.properties.whencreated)") | Out-null
         }catch [System.Management.Automation.PropertyNotFoundException]{
         Logging "$($Userw.Path)  $_"
-        $UserProps.Add('Created', "")
+        $UserProps.Add('Created', "") | Out-null
         }
-        try {$UserProps.Add('Modified', [dateTime]"$($_.properties.whenchanged)")
+        try {$UserProps.Add('Modified', [dateTime]"$($_.properties.whenchanged)") | Out-null
         }catch [System.Management.Automation.PropertyNotFoundException]{
         Logging "$($Userw.Path)  $_"
-        $UserProps.Add('Modified', "")
+        $UserProps.Add('Modified', "") | Out-null
         }
-        try{$UserProps.Add('PasswordLastSet', [dateTime]::FromFileTime("$($_.properties.pwdlastset)"))
+        try{$UserProps.Add('PasswordLastSet', [dateTime]::FromFileTime("$($_.properties.pwdlastset)")) | Out-null
         }catch [System.Management.Automation.PropertyNotFoundException]{
         Logging "$($Userw.Path)  $_"
-        $UserProps.Add('PasswordLastSet', "")
+        $UserProps.Add('PasswordLastSet', "") | Out-null
         }
-        try{$UserProps.Add('LastLogon', [dateTime]::FromFileTime("$($_.properties.lastlogontimestamp)"))
+        try{$UserProps.Add('LastLogon', [dateTime]::FromFileTime("$($_.properties.lastlogontimestamp)")) | Out-null
         }catch [System.Management.Automation.PropertyNotFoundException]{
         Logging "$($Userw.Path)  $_"
-        $UserProps.Add('LastLogon',"")
+        $UserProps.Add('LastLogon',"") | Out-null
         }
         try{$UserProps.Add('AccountExpires',( &{$exval = "$($_.properties.accountexpires)"
                 If (($exval -eq 0) -or ($exval -gt [DateTime]::MaxValue.Ticks))
@@ -271,11 +260,11 @@ if ($RecordCount -gt 0){
                     $acctExpires
                     }
                 }
-        }))
+        })) | Out-null
         }catch [System.Management.Automation.PropertyNotFoundException]{
         Logging "$($Userw.Path)  $_"
         }
-        try{$UserProps.Add('SPN Count', "$($_.properties['ServicePrincipalName'].count)")
+        try{$UserProps.Add('SPN Count', "$($_.properties['ServicePrincipalName'].count)") | Out-null
         }catch [System.Management.Automation.PropertyNotFoundException]{
         Logging "$($Userw.Path)  $_"
         }
@@ -296,9 +285,9 @@ if ($RecordCount -gt 0){
             $eventDetails | ConvertTo-HTML @{ l='Eventlog Details (Encryption Type Codes >> 0x11=aes128,0x12=aes256,0x17=rc4)'; e={ $_ } } -Fragment | Out-File -Append "$reportFilePath"
         }
     }
-Write-Host "Report $reportFilePath successfully generated"                       
+Logging "Report $reportFilePath successfully generated"                       
 }else{
 
     # Display fail
-    Write-Host "No records were found that match your search."
+    Logging "No records were found that match your search."
 }
