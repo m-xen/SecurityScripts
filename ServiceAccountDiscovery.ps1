@@ -293,10 +293,10 @@ if ($RecordCount -gt 0){
             $eventDetails = [System.Collections.ArrayList]::new()
             $eventDetails = EventLogs $PreContent $filtered
             "<br> "| Out-File -Append "$reportFilePath"
-            $eventDetails | ConvertTo-HTML @{ l='Eventlog Details'; e={ $_ } } -Fragment | Out-File -Append "$reportFilePath"
+            $eventDetails | ConvertTo-HTML @{ l='Eventlog Details (Encryption Type Codes >> 0x11=aes128,0x12=aes256,0x17=rc4)'; e={ $_ } } -Fragment | Out-File -Append "$reportFilePath"
         }
     }
-Write-Host "Report $reportFilePath successfully generated"                        
+Write-Host "Report $reportFilePath successfully generated"                       
 }else{
 
     # Display fail
