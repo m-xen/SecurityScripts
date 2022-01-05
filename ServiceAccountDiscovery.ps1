@@ -31,7 +31,7 @@ N.B. Run with elevated administrator credentials, preferably on a Domain Control
 
     Return an html report of *user* accounts that have registered SPNs in the current user's domain.
     
-    PS .\Get-SPN.ps1  
+    PS .\ServiceAccountDiscovery.ps1  
 
     AZUREADSSOACC
 
@@ -68,9 +68,17 @@ N.B. Run with elevated administrator credentials, preferably on a Domain Control
 
 .EXAMPLE 2
 
-Return an html report of *all* accounts that have registered SPNs in the current user's domain.
-    
-    PS .\Get-SPN.ps1 -filter all
+    Examples of running with the 'all' filter
+
+PS C:\Users\Administrator\Documents> .\ServiceAccountDiscovery.ps1 -filter all
+
+
+    Directory: C:\Users\Administrator\Documents
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        01/01/2022     01:01              0 2022-01-01_01.01.01_WIN-QE2QE2QE2_SPN_Audit_Report.htm
 
 #>
 Param(
